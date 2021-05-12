@@ -13,6 +13,33 @@ import "strconv"
 // example to show how to declare the arguments
 // and reply for an RPC.
 //
+const (
+	MAP_PHASE = 0
+	REDUCE_PHASE = 1
+)
+
+type Task struct {
+	Phase int
+	WorkerId int
+	NMap int     
+	NReduce int
+	FileName string
+}
+
+
+
+type ReportArgs struct{
+	WorkerId int
+	err error
+}
+type ReportReply struct {
+}
+type RegisterArgs struct {	
+}
+type RegisterReply struct {
+	Task Task
+}
+
 
 type ExampleArgs struct {
 	X int
