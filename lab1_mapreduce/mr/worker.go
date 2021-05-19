@@ -24,6 +24,7 @@ func (a ByKey) Len() int           { return len(a) }
 func (a ByKey) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByKey) Less(i, j int) bool { return a[i].Key < a[j].Key }
 
+var ok bool
 
 //
 // use ihash(key) % NReduce to choose the reduce
@@ -41,11 +42,11 @@ func ihash(key string) int {
 func Worker(mapf func(string, string) []KeyValue,
 	reducef func(string, []string) string) {
 	// Your worker implementation here.
-	
-	for {
+	ok = false
+	for !ok {
 		// 1. 申请Task  mr-nmap-nreduce or mr-out-nreduce ，如果检测到coordinator没开启 break
 		registerReply := RegisterReply{}
-		call("Coordinator.Register", RegisterArgs{}, &registerReply)  
+		call("Coordinator.Register", &RegisterArgs{}, &registerReply)  
 		task:=registerReply.Task
 	
 		// 2. 对应Task调用对应函数
@@ -146,8 +147,7 @@ func doReduce(reducef func(string, []string) string, task *Task) {
 
 
 func report(idx int, err error) {
-	
-	call("Coordinator.Report", ReportArgs{idx, err}, &ReportReply{})
+	call("Coordinator.Report",&ReportArgs{idx, err}, &ReportReply{})
 }
 
 //
@@ -185,11 +185,15 @@ func call(rpcname string, args interface{}, reply interface{}) bool {
 	// c, err := rpc.DialHTTP("unix", sockname)
 	if err != nil {
 		// 可能是完成任务从而关闭coor导致的断开，所以不报错
+		ok = true
+		return true
 	}
-	defer c.Close()
-
+	
+	
+	
 	err = c.Call(rpcname, args, reply)
 	
+	c.Close()
 	if err == nil {
 		return true
 	}
