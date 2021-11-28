@@ -41,8 +41,8 @@
       <module name="6.824" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/lab0_kv_crawler/crawler.go" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/lab0_kv_crawler/crawler.go" />
       <method v="2" />
     </configuration>
     <recent_temporary>
